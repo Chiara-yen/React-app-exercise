@@ -1,16 +1,7 @@
-var React = require('react');
-var Main = require('./components/Main.jsx');
+var React  = require('react');
+var Router = require('react-router');
+var routes = require('./config/routes');
 
-var App = React.createClass({
-
-	render: function() {
-		return (
-			<div>
-				<Main />
-			</div>
-		);
-	}
-
+Router.run(routes, function(Root) {
+	React.render(<Root/> , document.getElementById('app'));
 });
-
-React.render(<App/> , document.getElementById('app'));
