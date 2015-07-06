@@ -32,6 +32,11 @@ var Profile = React.createClass({
 		this.unbind('notes');
 	},
 
+	handleAddedNote: function(newNote) {
+		var childRef = this.refs.child(this.getParams().username);
+		childRef.set(this.state.notes.concat([newNote]));
+	},
+
 	render: function() {
 		var username = this.getParams().username;
 		return (
@@ -43,7 +48,11 @@ var Profile = React.createClass({
 					<Repos username={username} repos={this.state.repos}/>
 				</div>
 				<div className="col-md-4">
-					<Notes username={username} notes={this.state.notes}/>
+					<Notes
+						username={username}
+						notes={this.state.notes}
+						addNote={this.handleAddedNote}
+					/>
 				</div>
 			</section>
 		);
