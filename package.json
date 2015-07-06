@@ -18,9 +18,11 @@
     "webpack": "^1.10.0"
   },
   "dependencies": {
+    "firebase": "^2.2.7",
     "koa": "^0.21.0",
     "koa-static": "^1.4.9",
     "react": "^0.13.3",
-    "react-router": "^0.13.3"
+    "react-router": "^0.13.3",
+    "reactfire": "^0.4.0"
   }
 }
