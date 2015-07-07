@@ -14,12 +14,12 @@ var SearchGithub = React.createClass({
 
 	render: function() {
 		return (
-			<section className="col-sm-12">
+			<section className="row" style={{width: '750px'}}>
 				<form onSubmit={this.handlerSubmit}>
-					<div className="col-sm-7">
+					<div className="col-xs-7">
 						<input type="text" className="form-control" ref="userName" />
 					</div>
-					<div className="col-sm-5">
+					<div className="col-xs-5">
 						<button type="submit" className="btn btn-block btn-primary">Search Github</button>
 					</div>
 				</form>
