@@ -3,6 +3,7 @@ var Router = require('react-router');
 var ReactFireMixin = require('reactfire');
 var Firebase = require('firebase');
 
+var helper = require('../utils/helper');
 var UserProfile = require('./Github/UserProfile');
 var Repos = require('./Github/Repos');
 var Notes = require('./Notes/Notes');
@@ -14,18 +15,25 @@ var Profile = React.createClass({
 	getInitialState: function() {
 		return {
 			notes: [],
-			bio: {name: 'Chiara-yen'},
-			repos: [1, 2, 3]
+			bio: {},
+			repos: []
 		};
 	},
 
 	componentDidMount: function() {
-		console.log('componentDidMount');
-
 		this.refs = new Firebase('https://github-note-taker.firebaseio.com');
-		var childRef = this.refs.child(this.getParams().username);
+		var username = this.getParams().username;
+		var childRef = this.refs.child(username);
 
 		this.bindAsArray(childRef, 'notes');
+
+		helper.getGithubInfo(username)
+			.then(function(dataObj) {
+				this.setState({
+					repos: dataObj.repos,
+					bio: dataObj.bio
+				});
+			}.bind(this));
 	},
 
 	componentWillUnmount: function() {
