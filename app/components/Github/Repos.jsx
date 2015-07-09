@@ -8,12 +8,26 @@ var Repos = React.createClass({
 	},
 
 	render: function() {
+
+		var repos = this.props.repos.map(function(repo, index){
+			console.log('Repos[' + index + ']', repo);
+			return (
+				<li className="list-group-item" key={index}>
+					{repo.html_url &&
+						<h4><a href={repo.html_url}>{repo.name}</a></h4>
+					}
+					{repo.description &&
+						<p>{repo.description}</p>
+					}
+				</li>
+			);
+		});
+
 		return (
 			<section>
 				<h3>Repos</h3>
-				<ul>
-					<li>User Name: {this.props.username}</li>
-					<li>{this.props.repos}</li>
+				<ul className="list-group">
+					{repos}
 				</ul>
 			</section>
 		);

@@ -20,8 +20,7 @@ var Profile = React.createClass({
 		};
 	},
 
-	componentDidMount: function() {
-		this.refs = new Firebase('https://github-note-taker.firebaseio.com');
+	init: function() {
 		var username = this.getParams().username;
 		var childRef = this.refs.child(username);
 
@@ -29,11 +28,22 @@ var Profile = React.createClass({
 
 		helper.getGithubInfo(username)
 			.then(function(dataObj) {
+				console.log('dataObj : ', dataObj);
 				this.setState({
 					repos: dataObj.repos,
 					bio: dataObj.bio
 				});
 			}.bind(this));
+	},
+
+	componentDidMount: function() {
+		this.refs = new Firebase('https://github-note-taker.firebaseio.com');
+		this.init();
+	},
+
+	componentWillReceiveProps: function(nextProps) {
+		this.unbind('notes');
+		this.init();
 	},
 
 	componentWillUnmount: function() {
