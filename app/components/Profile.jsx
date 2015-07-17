@@ -1,62 +1,69 @@
-var React = require('react');
-var Router = require('react-router');
-var ReactFireMixin = require('reactfire');
-var Firebase = require('firebase');
+import React from 'react';
+import Rebase from 're-base';
 
-var helper = require('../utils/helper');
-var UserProfile = require('./Github/UserProfile');
-var Repos = require('./Github/Repos');
-var Notes = require('./Notes/Notes');
+import helper from '../utils/helper';
+import UserProfile from './Github/UserProfile';
+import Repos from './Github/Repos';
+import Notes from './Notes/Notes';
 
-var Profile = React.createClass({
+var base = Rebase.createClass('https://github-note-taker.firebaseio.com');
 
-	mixins: [Router.State, ReactFireMixin],
+class Profile extends React.Component {
 
-	getInitialState: function() {
-		return {
+// ES5 // getInitialState
+	constructor(props) {
+		super(props);
+		this.state = {
 			notes: [],
 			bio: {},
 			repos: []
 		};
-	},
+	}
 
-	init: function() {
-		var username = this.getParams().username;
-		var childRef = this.refs.child(username);
+	init() {
+		var username = this.router.getCurrentParams().username;
 
-		this.bindAsArray(childRef, 'notes');
+		this.ref = base.bindToState(username, {
+			context: this,
+			asArray: true,
+			state: 'notes'
+		});
 
 		helper.getGithubInfo(username)
-			.then(function(dataObj) {
+			.then((dataObj) => {
 				console.log('dataObj : ', dataObj);
 				this.setState({
 					repos: dataObj.repos,
 					bio: dataObj.bio
 				});
-			}.bind(this));
-	},
+			});
+	}
 
-	componentDidMount: function() {
-		this.refs = new Firebase('https://github-note-taker.firebaseio.com');
+	componentWillMount() {
+		this.router = this.context.router;
+	}
+
+	componentDidMount() {
 		this.init();
-	},
+	}
 
-	componentWillReceiveProps: function(nextProps) {
-		this.unbind('notes');
+	componentWillReceiveProps(nextProps) {
+		base.removeBinding(this.ref);
 		this.init();
-	},
+	}
 
-	componentWillUnmount: function() {
-		this.unbind('notes');
-	},
+	componentWillUnmount() {
+		base.removeBinding(this.ref);
+	}
 
-	handleAddedNote: function(newNote) {
-		var childRef = this.refs.child(this.getParams().username);
-		childRef.set(this.state.notes.concat([newNote]));
-	},
+	handleAddedNote(newNote) {
+		base.post(this.router.getCurrentParams().username, {
+			data: this.state.notes.concat([newNote])
+		});
+	}
 
-	render: function() {
-		var username = this.getParams().username;
+	render() {
+		var username = this.router.getCurrentParams().username;
 		return (
 			<section className="row">
 				<div className="col-md-4">
@@ -69,13 +76,17 @@ var Profile = React.createClass({
 					<Notes
 						username={username}
 						notes={this.state.notes}
-						addNote={this.handleAddedNote}
+						addNote={this.handleAddedNote.bind(this)}
 					/>
 				</div>
 			</section>
 		);
 	}
+};
 
-});
+// ES5 // mixins: [Router.State, ReactFireMixin]
+Profile.contextTypes = {
+	router: React.PropTypes.func.isRequired
+};
 
-module.exports = Profile;
+export default Profile;
