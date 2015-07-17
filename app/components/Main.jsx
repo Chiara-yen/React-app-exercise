@@ -1,7 +1,7 @@
-var React = require('react');
-var RouteHandler = require('react-router').RouteHandler;
+import React from 'react';
+import {RouteHandler} from 'react-router';
 
-var SearchGithub = require('./SearchGithub');
+import SearchGithub from './SearchGithub';
 
 var navStyle = {
 	height: '50px',
@@ -10,21 +10,21 @@ var navStyle = {
 	justifyContent: 'center',
 };
 
-var Main = React.createClass({
+class Main extends React.Component {
 
-	render: function() {
+	render() {
+		console.log('Main Class props : ', this.props);
 		return (
 			<section>
 				<nav className="navbar navbar-default" role="navigation" style={navStyle}>
 					<SearchGithub />
 				</nav>
 				<div className="container">
-					<RouteHandler />
+					<RouteHandler {...this.props} />
 				</div>
 			</section>
 		)
 	}
+};
 
-});
-
-module.exports = Main;
+export default Main;
